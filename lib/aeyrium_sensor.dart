@@ -21,7 +21,7 @@ class SensorEvent {
 }
 
 class AeyriumSensor {
-  static Stream<SensorEvent> _sensorEvents;
+  static Stream<SensorEvent>? _sensorEvents;
 
   AeyriumSensor._();
 
@@ -32,7 +32,7 @@ class AeyriumSensor {
           .receiveBroadcastStream()
           .map((dynamic event) => _listToSensorEvent(event.cast<double>()));
     }
-    return _sensorEvents;
+    return _sensorEvents!;
   }
 
   static SensorEvent _listToSensorEvent(List<double> list) {

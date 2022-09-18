@@ -1,26 +1,27 @@
-import 'dart:async';
-import 'dart:typed_data';
 import 'package:aeyrium_sensor/aeyrium_sensor.dart';
 import 'package:flutter/services.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   test('${AeyriumSensor.sensorEvents} are streamed', () async {
     const String channelName = 'plugins.aeyrium.com/sensor';
     const List<double> sensorData = <double>[1.0, 2.0];
 
     const StandardMethodCodec standardMethod = StandardMethodCodec();
 
-    void emitEvent(ByteData event) {
-      BinaryMessages.handlePlatformMessage(
+    void emitEvent(ByteData? event) {
+      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+          .handlePlatformMessage(
         channelName,
         event,
-        (ByteData reply) {},
+        (ByteData? reply) {},
       );
     }
 
     bool isCanceled = false;
-    BinaryMessages.setMockMessageHandler(channelName, (ByteData message) async {
+    TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+        .setMockMessageHandler(channelName, (ByteData? message) async {
       final MethodCall methodCall = standardMethod.decodeMethodCall(message);
       if (methodCall.method == 'listen') {
         emitEvent(standardMethod.encodeSuccessEnvelope(sensorData));
